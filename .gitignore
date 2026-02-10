@@ -9,13 +9,3 @@ storage/speech.mp3
 
 # Dedicated projects workspace (Isolated from main CLAWBOLT)
 Projects/
-
-# Secrets & Environment
-config/secrets.env
-.env
-storage/
-!storage/logs/
-!storage/recordings/
-!storage/screenshots/
-!storage/states/
-CombineAllCode.txt

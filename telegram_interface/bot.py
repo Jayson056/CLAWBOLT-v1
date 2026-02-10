@@ -4,6 +4,7 @@ import logging
 import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.error import TimedOut, NetworkError
 from telegram_interface.auth import is_authorized
 
 from agent.screen import screen_command
@@ -82,7 +83,20 @@ async def handle_message_wrapper(update: Update, context: ContextTypes.DEFAULT_T
         return
 
     # 4. Standard Antigravity Injection
-    await core_handle_message(update, context)
+    try:
+        await core_handle_message(update, context)
+    except (TimedOut, NetworkError) as e:
+        logger.error(f"Network issue during message handling: {e}")
+        try:
+            await update.message.reply_text("📶 **NETWORK ISSUE DETECTED**\n\nThe connection to Telegram timed out. Please **send your message again** to ensure it reaches Antigravity.")
+        except Exception:
+            pass # Silent failure if even the error message fails
+    except Exception as e:
+        logger.error(f"Unexpected error in message handler: {e}")
+        try:
+            await update.message.reply_text(f"⚠️ **UNEXPECTED ERROR**\n\nSomething went wrong: `{str(e)}`")
+        except Exception:
+            pass
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle Inline Button clicks."""

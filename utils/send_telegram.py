@@ -7,8 +7,8 @@ import os
 import time
 
 # Configuration (Mirrored from telegram_bridge.py)
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
-AUTHORIZED_CHAT_ID = int(os.getenv("TELEGRAM_USER_ID", "0"))
+BOT_TOKEN = "7961814507:AAH8d2r4erdsEtGl88U99Q9HehFixQ4tBlo"
+AUTHORIZED_CHAT_ID = 5662168844
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
 def send_message(text, parse_mode="Markdown", retries=3):

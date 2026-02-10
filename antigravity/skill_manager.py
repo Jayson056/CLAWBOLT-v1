@@ -2,120 +2,139 @@
 # Copyright (c) 2026 Jayson056. All rights reserved.
 
 import os
-import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-SKILLS_FILE = "storage/current_skill.json"
-DEFAULT_SKILL = "WORKSPACE"
+# Base directory for skill files
+SKILLS_DIR = os.path.join(os.path.dirname(__file__), "AI_SKILLS_DIR")
+STATE_FILE = os.path.join(os.path.dirname(__file__), "current_skill.txt")
 
 SKILL_CONFIG = {
-    "CORE_MAINTENANCE": {
-        "name": "CORE SYSTEM MAINTENANCE",
-        "header": "### CORE SYSTEM MAINTENANCE MODE ###\nYou are tasked with maintaining the CLAWBOLT core system at /home/son/CLAWBOLT. Your goal is stability, performance, and security. Follow core rules strictly.",
-        "password_protected": True
-    },
     "WORKSPACE": {
-        "name": "WORKSPACE SKILLS",
-        "header": "### WORKSPACE SKILLS MODE ###\nYou are in the default productive workspace. Focus on projects in /home/son/CLAWBOLT_Workspaces. You have full creative freedom there.",
-        "password_protected": False
+        "name": "Workspace Productivity", 
+        "file": "WORKSPACE.skill",
+        "mission": "Optimize workspace workflow, manage files, and automate daily tasks."
     },
     "SCHOOL": {
-        "name": "SCHOOL HELP",
-        "header": "### SCHOOL HELPER MODE ###\nYou are an AI tutor. Focus on explaining concepts clearly, helping with homework, and strictly following academic honesty guidelines.",
-        "password_protected": False
-    },
-    "RESEARCH_PAPER": {
-        "name": "RESEARCH PAPER ASSISTANT",
-        "header": "### RESEARCH ASSISTANT MODE ###\nYou help with academic research. Assist with literature reviews, methodology, drafting papers, and citation management.",
-        "password_protected": False
+        "name": "School & Academic", 
+        "file": "SCHOOL.skill",
+        "mission": "Assist with general academic learning, note-taking, and educational research."
     },
     "STUDENT": {
-        "name": "STUDENT PRODUCTIVITY",
-        "header": "### STUDENT MODE ###\nFocus on study plans, note-taking, and organizing student life and assignments efficiently.",
-        "password_protected": False
+        "name": "Student Tasks", 
+        "file": "STUDENT.skill",
+        "mission": "Help manage student schedules, reminders, and basic task execution."
     },
-    "PROGRAMMING_TASK": {
-        "name": "PROGRAMMING EXPERT",
-        "header": "### PROGRAMMING TASK MODE ###\nYou are a senior software engineer. Focus on clean code, architecture, unit testing, and efficient algorithms.",
-        "password_protected": False
+    "RESEARCH_PAPER": {
+        "name": "Research Papers", 
+        "file": "RESEARCH_PAPER.skill",
+        "mission": "Deep-dive research, citation management, and academic synthesis."
     },
     "ASSIGNMENT": {
-        "name": "ASSIGNMENT SOLVER",
-        "header": "### ASSIGNMENT MODE ###\nYou help complete specific tasks and assignments based on provided requirements and rubrics.",
-        "password_protected": False
+        "name": "Assignments", 
+        "file": "ASSIGNMENT.skill",
+        "mission": "Structured problem solving and content creation for course assignments."
     },
-    "DATA_ANALYSIS": {
-        "name": "DATA ANALYST",
-        "header": "### DATA ANALYSIS MODE ###\nFocus on processing data, generating insights, and creating visualizations.",
-        "password_protected": False
+    "PROGRAMMING_TASK": {
+        "name": "Programming Tasks", 
+        "file": "PROGRAMMING_TASK.skill",
+        "mission": "Code generation, algorithm optimization, and logical implementation."
     },
-    "CODE_REVIEWER": {
-        "name": "CODE REVIEWER",
-        "header": "### CODE REVIEWER MODE ###\nFocus on identifying potential issues, security vulnerabilities, and adherence to best practices in code.",
-        "password_protected": False
+    "AI_ARCHITECT": {
+        "name": "AI System Architect",
+        "file": "AI_ARCHITECT.skill",
+        "mission": "High-level design of AI workflows, agentic systems, and neural logic."
+    },
+    "CYBER_SECURITY": {
+        "name": "Security Specialist",
+        "file": "CYBER_SECURITY.skill",
+        "mission": "Penetration testing, vulnerability scanning, and hardening of local systems."
+    },
+    "TECH_WRITER": {
+        "name": "Technical Documentation",
+        "file": "TECH_WRITER.skill",
+        "mission": "Creating clear, concise, and structured technical docs and API guides."
+    },
+    "PROJECT_LEAD": {
+        "name": "Project Management",
+        "file": "PROJECT_LEAD.skill",
+        "mission": "Timeline tracking, resource allocation, and project roadmap oversight."
+    },
+    "CORE_MAINTENANCE": {
+        "name": "Core Maintenance", 
+        "file": "CORE_MAINTENANCE.skill", 
+        "password_protected": True,
+        "mission": "Privileged system maintenance, updates, and low-level configuration."
     },
     "BUG_HUNTER": {
-        "name": "BUG HUNTER",
-        "header": "### BUG HUNTER MODE ###\nFocus on reproducing bugs, root cause analysis, and proposing robust fixes.",
-        "password_protected": False
+        "name": "Bug Hunter", 
+        "file": "BUG_HUNTER.skill",
+        "mission": "Identifying logical flaws, syntax errors, and runtime bottlenecks."
+    },
+    "CODE_REVIEWER": {
+        "name": "Code Reviewer", 
+        "file": "CODE_REVIEWER.skill",
+        "mission": "Analyzing code quality, readability, and adherence to best practices."
+    },
+    "DATA_ANALYSIS": {
+        "name": "Data Analysis", 
+        "file": "DATA_ANALYSIS.skill",
+        "mission": "Processing data sets, generating insights, and creating visual summaries."
     },
     "CREATIVE_WRITER": {
-        "name": "CREATIVE WRITER",
-        "header": "### CREATIVE WRITING MODE ###\nFocus on storytelling, creative expression, and engaging content generation.",
-        "password_protected": False
-    }
+        "name": "Creative Writer", 
+        "file": "CREATIVE_WRITER.skill",
+        "mission": "Narrative drafting, storytelling, and imaginative content generation."
+    },
 }
 
-RESPONSE_TEMPLATE = """
-**CRITICAL RESPONSE RULE:**
-Every response MUST be sent via the Telegram bridge. Use this EXACT command structure in the terminal:
-
-```bash
-FINAL_TEXT="Your response here"; \\
-/home/son/CLAWBOLT/.venv/bin/python3 /home/son/CLAWBOLT/utils/send_telegram.py "$FINAL_TEXT"; \\
-V_PATH=$(/home/son/CLAWBOLT/.venv/bin/python3 /home/son/CLAWBOLT/utils/text_to_speech.py "$FINAL_TEXT") && \\
-/home/son/CLAWBOLT/.venv/bin/python3 /home/son/CLAWBOLT/utils/send_telegram.py --voice "$V_PATH"
-```
-"""
-
 def get_current_skill():
-    if os.path.exists(SKILLS_FILE):
+    """Returns the current active skill ID."""
+    if os.path.exists(STATE_FILE):
         try:
-            with open(SKILLS_FILE, 'r') as f:
-                data = json.load(f)
-                skill = data.get("skill", DEFAULT_SKILL)
-                if skill in SKILL_CONFIG:
-                    return skill
+            with open(STATE_FILE, "r") as f:
+                skill_id = f.read().strip()
+                if skill_id in SKILL_CONFIG:
+                    return skill_id
         except Exception as e:
-            logger.error(f"Error reading skill file: {e}")
-    return DEFAULT_SKILL
+            logger.error(f"Error reading skill state: {e}")
+    
+    # Default skill
+    return "WORKSPACE"
 
 def set_current_skill(skill_id):
-    if skill_id in SKILL_CONFIG:
-        try:
-            os.makedirs(os.path.dirname(SKILLS_FILE), exist_ok=True)
-            with open(SKILLS_FILE, 'w') as f:
-                json.dump({"skill": skill_id}, f)
-            return True
-        except Exception as e:
-            logger.error(f"Error saving skill file: {e}")
-    return False
+    """Sets the current active skill ID."""
+    if skill_id not in SKILL_CONFIG:
+        logger.error(f"Invalid skill ID: {skill_id}")
+        return False
+    
+    try:
+        with open(STATE_FILE, "w") as f:
+            f.write(skill_id)
+        return True
+    except Exception as e:
+        logger.error(f"Error saving skill state: {e}")
+        return False
 
 def get_skill_header():
+    """Returns a premium structured header for the current active skill."""
     skill_id = get_current_skill()
-    config = SKILL_CONFIG.get(skill_id, SKILL_CONFIG[DEFAULT_SKILL])
+    config = SKILL_CONFIG[skill_id]
+    skill_file = os.path.abspath(os.path.join(SKILLS_DIR, config["file"]))
+    core_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "AI_SKILLS"))
     
-    # Read the base AI_SKILLS file
-    base_skills = ""
-    try:
-        with open("/home/son/CLAWBOLT/antigravity/AI_SKILLS", "r") as f:
-            base_skills = f.read()
-    except Exception as e:
-        logger.error(f"Error reading AI_SKILLS: {e}")
-        base_skills = "Read first the /home/son/CLAWBOLT/antigravity/AI_SKILLS"
-
-    # Combine: Mode Header + Response Template + Base Rules
-    full_header = f"{config['header']}\n\n{RESPONSE_TEMPLATE}\n\n{base_skills}"
-    return full_header
+    status = "LOCKED" if config.get("password_protected") else "ACTIVE"
+    
+    header = f"🦅 [ SYSTEM: CLAWBOLT AI CORE ] 🦅\n"
+    header += f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    header += f"SKILL_NAME  : {config['name'].upper()}\n"
+    header += f"MISSION     : {config['mission']}\n"
+    header += f"STATUS      : {status}\n"
+    header += f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    header += f"SKILL_FILE  : {skill_file}\n"
+    header += f"PERSONA_FILE: {core_file}\n"
+    header += f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    header += f"指令: 严格遵守上述文件定义的角色定位和运行策略。\n"
+    
+    return header

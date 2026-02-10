@@ -1,66 +1,68 @@
-# 🦅 CLAWBOLT - Private AI Control Bridge
+# CLAWBOLT
 
-**CLAWBOLT** is a secure, Telegram-driven control system for Antigravity AI and Linux system automation. It implements a strict **Human-in-the-Loop** (HITL) execution model, ensuring that while AI can reason and recommend, only the human user can authorize high-stakes actions.
+**CLAWBOLT** is a secure, Telegram-driven control system for Antigravity AI and Linux system automation, designed with strict **Human-in-the-Loop** execution.
 
----
+**Created by Jayson056**
+**Copyright © 2026 Jayson056. All rights reserved.**
 
-## 📖 Project Overview
-CLAWBOLT serves as the secure interface between a remote user and a local Linux machine running Antigravity AI. It handles authentication, secure password injection, screen monitoring, and remote system management through a polished Telegram interface.
+## 1. Project Rationale
+CLAWBOLT is designed to bridge human authority, AI assistance, and system-level automation in a controlled, observable, and reversible way. Modern AI tools can reason, but must not act without consent when actions involve file access, system modification, or privileged commands.
 
-### Core Philosophy
-- **AI-Assisted, Human-Decided**: No destructive action happens without user confirmation via secure inline buttons.
-- **Privacy First**: Sensitive data like passwords are never stored; they are injected directly into system memory/input buffers and wiped.
-- **Resilient Execution**: Designed to run as a system service with auto-recovery.
+This architecture ensures:
+- **Accountability**: Users sign off on actions.
+- **Transparency**: Every action is visible.
+- **Auditability**: Logs and screenshots track behavior.
+- **Safety**: No silent execution.
 
----
+## 2. Features
+- **Real-time AI Interaction**: Chat with Antigravity AI via Telegram.
+- **Smart Quota Awareness**: Check AI limits (`/quota`).
+- **Project Portability**: Export full project snapshots (`/save`).
+- **System Power Control**: Restart (`/sysrest`) and Logout (`/syslogout`).
+- **Media Tools**: Record screen (`/watch`) and audio (`/hear`).
+- **Security**: 
+  - **Inline Buttons**: Tap-based confirmation for critical actions.
+  - **Password Flow**: Securely inject passwords memory-only.
+  - **Auto-Start**: Systemd service resilience.
 
-## 📂 Documentation & Architecture
-Full documentation is organized into phases and specific guides:
+## 3. Work Breakdown Structure (WBS)
+### Phase 1 — Control Plane
+- Telegram bot, User auth, Command routing.
+### Phase 2 — AI Integration
+- Antigravity UI automation, Injection logic.
+### Phase 3 — Verification Layer
+- Action classification, Inline approval UI.
+### Phase 4 — Resilience & Expansion
+- Media commands, System status.
+### Phase 5 — Privilege Control
+- Sudo proxy, Password handling, Secure execution.
+### Phase 6 — Deployment & Hardening
+- Systemd service, Sudoers hardening, Documentation.
 
-- **[Installation & Requirements](docs/instruction.md)**: Detailed machine requirements and setup guide.
-- **Project Structure**:
-    - `/docs`: Contains phase-by-phase development documentation, WBS, and rationale.
-    - `/agent`: Higher-level intelligence routing.
-    - `/antigravity`: UI-specific mapping for the Antigravity AI interface.
-    - `/security`: Validation layers and secure credential flows.
+## 4. Requirements
+- Linux Mint 22.3 (or compatible)
+- Python 3.10+
+- Telegram Bot Token
+- Antigravity AI installed locally
 
-> **Note for Developers**: Please refer to the `docs/` directory for technical deep-dives into each implementation phase. Start with `docs/instruction.md` for machine setup.
-
----
-
-## 🎯 Project Rationale
-Modern AI tools are increasingly capable of performing system-level actions. However, autonomous execution on personal machines carries extreme risks. CLAWBOLT was created to:
-1. Provide a **secure tunnel** for system interaction.
-2. Implement **visual verification** (screenshots/watchdogs) so the user sees what the AI sees.
-3. Enforce **explicit consent** for every file move, command execution, or system change.
-
----
-
-## 🏗️ Work Breakdown Structure (WBS)
-- **Phase 1: Control Plane** (Bot initialization, Auth, Core routing)
-- **Phase 2: AI Integration** (UI mapping, Text injection)
-- **Phase 3: Verification Layer** (Action classification, Dynamic approval UI)
-- **Phase 4: Media & Resilience** (Screen recording, System telemetry)
-- **Phase 5: Privilege Escalation** (Secure sudo proxy, Memory-safe password injection)
-- **Phase 6: Deployment** (Systemd hardening, Documentation)
-
----
-
-## 🚀 Quick Start
-Refer to **[docs/instruction.md](docs/instruction.md)** for detailed setup.
-
+## 5. Startup
 ```bash
-# Basic run
+# Manual Start
 source .venv/bin/activate
 python3 main.py
+
+# Auto-Start (after install)
+sudo systemctl start clawbolt
 ```
 
----
+## 6. Safety Model
+- **No Silent Execution**: Every destructive action requires explicit confirmation.
+- **Transient Auth**: Passwords are wiped from memory immediately after use.
+- **Full Observability**: Screenshot and log everything.
 
-## 🛡️ Safety Model
-- **No Shadow Execution**: Transparent logs and real-time screen updates.
-- **Volatile Secrets**: Tokens and passwords remain in memory only as long as needed.
-- **Locked Scope**: Execution limited to predefined safe zones unless explicitly expanded.
+## 7. Disclaimer
+**CLAWBOLT is designed for authorized systems only.**
+The user retains full responsibility for all executed actions.
 
 ---
-Created by **Jayson056** | Copyright © 2026. All rights reserved.
+**AI assists. Humans decide. Systems obey.**
