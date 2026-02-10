@@ -2,10 +2,32 @@
 .venv/
 __pycache__/
 *.pyc
-Debug/
-storage/recordings/
-storage/screenshots/
-storage/speech.mp3
 
-# Dedicated projects workspace (Isolated from main CLAWBOLT)
-Projects/
+# Local Config & Secrets
+config/secrets.env
+.env
+*.yaml.bak
+
+# Storage & Temporary Files (Keep directories, ignore content)
+storage/*
+!storage/
+!storage/.gitkeep
+CombineAllCode.txt
+ClearCache&ResNt
+command
+combine_code.py
+Debug/
+debug_ocr.py
+
+# Assets/Recordings
+*.mp3
+*.wav
+*.mp4
+*.jpeg
+*.png
+*.pdf
+
+# Environment
+.python-version
+.idea/
+.vscode/
