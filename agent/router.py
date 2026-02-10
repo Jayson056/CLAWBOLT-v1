@@ -20,6 +20,7 @@ from agent.passkey import pass_command
 from agent.select_model import select_model_command
 from agent.select_skill import select_skill_command
 from agent.actions import accept_command, reject_command
+from agent.projects import projects_command
 from telegram_interface.auth import is_authorized # Needed for start check
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ COMMAND_DESCRIPTIONS = {
     "select_skill": "Switch AI persona/skills mode",
     "accept": "Click 'Accept ALL' in Antigravity UI",
     "reject": "Click 'Reject ALL' in Antigravity UI",
+    "projects": "Open and list the workplace projects folder",
 }
 
 # Command Registry
@@ -73,6 +75,7 @@ COMMANDS = {
     "/select_skill": select_skill_command,
     "/accept": accept_command,
     "/reject": reject_command,
+    "/projects": projects_command,
 }
 
 async def route_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

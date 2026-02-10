@@ -41,6 +41,7 @@ async def rules_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 **📁 File System**
 `/ls [path]` - List directory contents
+`/projects` - Open and list the workspace Projects folder
 `/save` - Save conversation snapshot
 
 **🎧 Audio**
