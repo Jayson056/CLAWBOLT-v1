@@ -1,0 +1,8 @@
+python-telegram-bot
+python-dotenv
+pyautogui
+psutil
+Pillow
+opencv-python
+pytesseract
+watchdog
